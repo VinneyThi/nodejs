@@ -216,6 +216,18 @@ int LisFigDisplay::getSize()
 {
     return this->size;
 }
+
+void setVetAux(double *ptrAux, double *ptrVet)
+{
+    if (!ptrAux)
+        return;
+
+    for (int i = 0; i < 3; i++)
+    {
+        ptrAux[i] = ptrVet[i];
+    }
+}
+
 Figura *line(Pontptr *ptrPoints, int l1)
 {
 
@@ -225,21 +237,64 @@ Figura *line(Pontptr *ptrPoints, int l1)
 
     ptrName = std::to_string(l1) + "L";
 
-    double *ptrVet = new double[3];
-    for (int i = 0; i < 3; i++)
-        ptrVet[i] = 0;
+    double *ptrVetTra = new double[3];
+    double vetAux[3] = {300.0, 200.0, 0.0};
 
-    Figura *ptrAuxF = new Figura(ptrName.c_str(), ptrPoints, ptrVet);
+    setVetAux(ptrVetTra, vetAux);
+    Figura *ptrAuxF = new Figura(ptrName.c_str(), ptrPoints, ptrVetTra);
 
     glPushMatrix();
 
     glOrtho(0, 600, 400, 0, -1, 1);
+    glTranslatef(300.0, 200.0, 0.0);
 
     glColor4ub(255, 20, 66, 255);
 
     //inicia desenho
 
     glBegin(GL_LINE_STRIP);
+    for (int i = 0; i < ptrPoints->size; i++)
+    {
+
+        Point *ptrAuxPoint = retornaPonto(ptrPoints, i);
+        if (!ptrAuxPoint)
+            break;
+        glVertex2f(ptrAuxPoint->ptrValue[0], ptrAuxPoint->ptrValue[1]);
+    }
+
+    glEnd();
+    //fecha a matriz de desenho
+    glPopMatrix();
+
+    return ptrAuxF;
+}
+
+Figura *lineR(Pontptr *ptrPoints, int l1)
+{
+
+    if (!ptrPoints)
+        return NULL;
+    std::string ptrName = " ";
+
+    ptrName = std::to_string(l1) + "L";
+
+    double *ptrVetTra = new double[3];
+    double vetAux[3] = {300.0, 200.0, 0.0};
+
+    setVetAux(ptrVetTra, vetAux);
+
+    Figura *ptrAuxF = new Figura(ptrName.c_str(), ptrPoints, ptrVetTra);
+
+    glPushMatrix();
+
+    glOrtho(0, 600, 400, 0, -1, 1);
+    glTranslatef(300.0, 200.0, 0.0);
+    glRotatef((GLfloat)-90, 0.0, 0.0,0.0);
+    glColor4ub(255, 20, 66, 255);
+
+    //inicia desenho
+
+    glBegin(GL_LINE_LOOP);
     for (int i = 0; i < ptrPoints->size; i++)
     {
 
@@ -264,13 +319,14 @@ void Deleteline(Pontptr *ptrPoints, char *ptrtyp)
 
     glPushMatrix();
     glOrtho(0, 600, 400, 0, -1, 1);
-
+   // glTranslatef(300.0, 200.0, 0.0);
+    //glRotatef((GLfloat)-90, 0.0, 0.0,0.0);
     glColor4ub(0, 0, 0, 255);
 
     //inicia desenho
-    if(ptrtyp[1] == 'L')
+    if (ptrtyp[1] == 'L')
         glBegin(GL_LINE_STRIP);
-    else if (ptrtyp[1] =='H')
+    else if (ptrtyp[1] == 'H')
         glBegin(GL_LINE_STRIP);
     else
         glBegin(GL_LINE_LOOP);
@@ -290,13 +346,13 @@ void Deleteline(Pontptr *ptrPoints, char *ptrtyp)
     return;
 }
 
-Figura * regularLine(Pontptr *ptrPoints, double *ptrVet, double l, char *ptrType, int r1)
+Figura *regularLine(Pontptr *ptrPoints, double *ptrVet, double l, char *ptrType, int r1)
 {
 
     if (!ptrPoints || !ptrType)
         return NULL;
 
-std::string ptrName = " ";
+    std::string ptrName = " ";
 
     ptrName = std::to_string(r1) + "R";
     //inicia desenho
@@ -366,12 +422,11 @@ std::string ptrName = " ";
         }
     }
 
-    //glRotatef ((GLfloat) 45.0, 0.0, 0.0, 1.0);
-     // glTranslatef (1.0, 0.0, 0.0);
+    // glTranslatef (1.0, 0.0, 0.0);
     glPushMatrix();
 
     glOrtho(0, 600, 400, 0, -1, 1);
-
+    glTranslatef(300.0, 200.0, 0.0);
     glColor4ub(255, 20, 66, 255);
 
     glBegin(GL_LINE_LOOP);
@@ -385,9 +440,11 @@ std::string ptrName = " ";
         glVertex2f(ptrAuxPoint->ptrValue[0], ptrAuxPoint->ptrValue[1]);
     }
 
-       double *ptrVetTra = new double[3];
-    for (int i = 0; i < 3; i++)
-        ptrVet[i] = 0;
+    double *ptrVetTra = new double[3];
+    double vetAux[3] = {300.0, 200.0, 0.0};
+
+    setVetAux(ptrVetTra, vetAux);
+
     Figura *ptrAuxF = new Figura(ptrName.c_str(), ptrPoints, ptrVetTra);
 
     //fecha a matriz de desenho
@@ -412,14 +469,7 @@ int main(int argc, char const *argv[])
 
     char *ptrEntrada = new char[240];
     double *ptrEntradaP;
-    double pontos1[2] = {100, 50};
-    double pontos2[2] = {200, 50};
 
-    double pontos3[2] = {400, 3};
-    double pontos4[2] = {4, 324};
-
-    setPoints(ptrPoints2, pontos3, 2);
-    setPoints(ptrPoints2, pontos4, 2);
     SDL_Init(SDL_INIT_EVERYTHING);
 
     //Memoria
@@ -451,7 +501,7 @@ int main(int argc, char const *argv[])
 
     bool flagEx = true;
     SDL_Event eventUser;
-    
+
     while (flagEx)
     {
 
@@ -463,10 +513,37 @@ int main(int argc, char const *argv[])
                                       //   line(ptrPoints2);
                                       //double cent[2] = {200, 200};
                                       //  regularLine(ptrPoints3, cent, 100, "t"); // fazer retornar um ponteiro para linkar a lista de ponstos
+
+        glPushMatrix();
+
+        glOrtho(0, 600, 400, 0, -1, 1);
+        glTranslatef(300.0, 200.0, 0.0);
+        glColor4ub(255, 255, 255, 255);
+        glBegin(GL_LINE_LOOP);
+
+        glVertex2f(-300.0, 0.0);
+        glVertex2f(300.0, 0.0);
+        glEnd();
+        glPopMatrix();
+
+        glPushMatrix();
+
+        glOrtho(0, 600, 400, 0, -1, 1);
+        glTranslatef(300.0, 200.0, 0.0);
+        glColor4ub(255, 255, 255, 255);
+        glBegin(GL_LINE_LOOP);
+
+        glVertex2f(0.0, 200.0);
+        glVertex2f(0.0, -200.0);
+        glEnd();
+        glPopMatrix();
+        SDL_GL_SwapBuffers();
+
         cout << "Escolha a operação " << endl
              << "1- Desenho livre " << endl
-             << "2 -Poligonos Regulares" << endl
-             << "3- Operações em Poligonos" << endl
+             << "2- Desenho livre Regular  " << endl
+             << "3 -Poligonos Regulares" << endl
+             << "4- Operações em Poligonos" << endl
              << "ESC- Para sair" << endl;
 
         cin >> ptrEntrada;
@@ -487,11 +564,31 @@ int main(int argc, char const *argv[])
             }
             ptrAuxFig = line(ptrPoints, ++l1);
             ptrListFIG->addFig(ptrAuxFig);
-          //  cout << ptrListFIG->getFig()->getName() << " " << ptrListFIG->getSize() << " " << ptrListFIG->getFig()->getPontptr()->ptrEnd->ptrValue[1] << endl;
+            //  cout << ptrListFIG->getFig()->getName() << " " << ptrListFIG->getSize() << " " << ptrListFIG->getFig()->getPontptr()->ptrEnd->ptrValue[1] << endl;
 
             //cout << ptrListFIG->getFig("3L")->getName() <<" " << ptrListFIG->getSize() << " " << ptrListFIG->getFig("3L")->getPontptr()->ptrEnd->ptrValue[1] << endl;
         }
         else if (ptrEntrada[0] == '2')
+        {
+
+            Pontptr *ptrPoints = new (Pontptr);
+            ptrPoints->size = 0;
+            cout << "Passe os pontos de entrada e para finalizar passe f" << endl;
+
+            while (ptrEntrada[0] != 'f')
+            {
+
+                ptrEntradaP = new double[2];
+                cin >> ptrEntradaP[0] >> ptrEntradaP[1] >> ptrEntrada[0];
+                setPoints(ptrPoints, ptrEntradaP, 2);
+            }
+            ptrAuxFig = lineR(ptrPoints, ++l1);
+            ptrListFIG->addFig(ptrAuxFig);
+            //  cout << ptrListFIG->getFig()->getName() << " " << ptrListFIG->getSize() << " " << ptrListFIG->getFig()->getPontptr()->ptrEnd->ptrValue[1] << endl;
+
+            //cout << ptrListFIG->getFig("3L")->getName() <<" " << ptrListFIG->getSize() << " " << ptrListFIG->getFig("3L")->getPontptr()->ptrEnd->ptrValue[1] << endl;
+        }
+        else if (ptrEntrada[0] == '3')
         {
             cout << "Passe o ponto central, tamanho da aresta e  a classe de Poligono" << endl;
             ptrEntradaP = new double[2];
@@ -500,9 +597,8 @@ int main(int argc, char const *argv[])
             Pontptr *ptrPoints = new (Pontptr);
             ptrPoints->size = 0;
             cout << ptrEntradaP[0] << " " << ptrEntradaP[1] << aresta << "" << ptrEntrada[0] << endl;
-            ptrAuxFig = regularLine(ptrPoints, ptrEntradaP, aresta, ptrEntrada,++rl);
+            ptrAuxFig = regularLine(ptrPoints, ptrEntradaP, aresta, ptrEntrada, ++rl);
             ptrListFIG->addFig(ptrAuxFig);
-            
         }
 
         else if (ptrEntrada[0] == 'd')
@@ -512,9 +608,9 @@ int main(int argc, char const *argv[])
 
             char vetN[2];
             cout << "Digite o nome da Fig a ser deletada" << endl;
-            cin >> vetN ;
-            
-            Deleteline(ptrListFIG->getFig(vetN)->getPontptr(),vetN);
+            cin >> vetN;
+
+            Deleteline(ptrListFIG->getFig(vetN)->getPontptr(), vetN);
         }
         SDL_GL_SwapBuffers();
         usleep(15000);

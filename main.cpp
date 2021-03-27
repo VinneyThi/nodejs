@@ -67,7 +67,7 @@ Figura::Figura(const char *ptrName, Pontptr *ptrListPoints, double *ptrVetTransl
     this->rot = 0;
 
     for (int i = 0; i < 3; i++)
-        this->vetScale[i] = 0;
+        this->vetScale[i] = 1;
 
     for (int i = 0; i < 3; i++)
         this->vetTransla[i] = ptrVetTransla[i];
@@ -289,7 +289,7 @@ Figura *lineR(Pontptr *ptrPoints, int l1)
 
     glOrtho(0, 600, 400, 0, -1, 1);
     glTranslatef(300.0, 200.0, 0.0);
-    glRotatef((GLfloat)-90, 0.0, 0.0,0.0);
+    glRotatef((GLfloat)-90, 0.0, 0.0, 0.0);
     glColor4ub(255, 20, 66, 255);
 
     //inicia desenho
@@ -311,7 +311,7 @@ Figura *lineR(Pontptr *ptrPoints, int l1)
     return ptrAuxF;
 }
 
-void Deleteline(Pontptr *ptrPoints, char *ptrtyp)
+void Deleteline(Pontptr *ptrPoints, const char *ptrtyp)
 {
     cout << "Dentro" << endl;
     if (!ptrPoints || !ptrtyp)
@@ -319,7 +319,7 @@ void Deleteline(Pontptr *ptrPoints, char *ptrtyp)
 
     glPushMatrix();
     glOrtho(0, 600, 400, 0, -1, 1);
-   // glTranslatef(300.0, 200.0, 0.0);
+    glTranslatef(300.0, 200.0, 0.0);
     //glRotatef((GLfloat)-90, 0.0, 0.0,0.0);
     glColor4ub(0, 0, 0, 255);
 
@@ -344,6 +344,58 @@ void Deleteline(Pontptr *ptrPoints, char *ptrtyp)
     glPopMatrix();
 
     return;
+}
+
+void DeleteF(Figura *ptrFig)
+{
+    cout << "Dentro" << endl;
+    if (!ptrFig)
+        return;
+
+    double *ptrAuxvetTran = ptrFig->getVetTransla();
+    double *ptrAuxvetScale = ptrFig->getVetScale();
+
+    glPushMatrix();
+
+    glOrtho(0, 600, 400, 0, -1, 1);
+
+    cout << "TRAM" << ptrAuxvetTran[0] << " " << ptrAuxvetTran[1] << endl;
+    cout << "SC" << ptrAuxvetScale[0] << " " << ptrAuxvetScale[1] << endl;
+    cout << "Rot" << ptrFig->getRot() << endl;
+    glTranslatef(ptrAuxvetTran[0], ptrAuxvetTran[1], 0.0);
+    glRotatef((GLfloat)ptrFig->getRot(), 0.0, 0.0, 0.0);
+    glScaled(ptrAuxvetScale[0], ptrAuxvetScale[1], 0.0);
+    glColor4ub(0, 0, 0, 255);
+
+    //inicia desenho
+    if (ptrFig->getName()[1] == 'L')
+        glBegin(GL_LINE_STRIP);
+    else if (ptrFig->getName()[1] == 'H')
+        glBegin(GL_LINE_STRIP);
+    else
+        glBegin(GL_LINE_LOOP);
+    for (int i = 0; i < ptrFig->getPontptr()->size; i++)
+    {
+
+        Point *ptrAuxPoint = retornaPonto(ptrFig->getPontptr(), i);
+        if (!ptrAuxPoint)
+            break;
+        glVertex2f(ptrAuxPoint->ptrValue[0], ptrAuxPoint->ptrValue[1]);
+    }
+
+    glEnd();
+    //fecha a matriz de desenho
+    glPopMatrix();
+
+    return;
+}
+
+void operacao(Figura *ptrFig, double *ptrVet, const char o)
+{
+    if (!ptrFig || !ptrVet)
+        return;
+
+    DeleteF(ptrFig);
 }
 
 Figura *regularLine(Pontptr *ptrPoints, double *ptrVet, double l, char *ptrType, int r1)
@@ -609,8 +661,8 @@ int main(int argc, char const *argv[])
             char vetN[2];
             cout << "Digite o nome da Fig a ser deletada" << endl;
             cin >> vetN;
-
-            Deleteline(ptrListFIG->getFig(vetN)->getPontptr(), vetN);
+            //Deleteline(ptrListFIG->getFig(vetN)->getPontptr(),vetN);
+            DeleteF(ptrListFIG->getFig(vetN));
         }
         SDL_GL_SwapBuffers();
         usleep(15000);

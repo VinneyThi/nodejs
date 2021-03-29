@@ -269,6 +269,13 @@ Figura *line(Pontptr *ptrPoints, int l1)
 
     return ptrAuxF;
 }
+void rot(Figura *ptrFig, double *ptrVet)
+{
+    ptrFig->setRot(ptrVet[0]);
+    glTranslatef(ptrFig->getVetTransla()[0] + (ptrFig->getPontptr()->ptrInit->ptrValue[0]), ptrFig->getVetTransla()[1] + (ptrFig->getPontptr()->ptrInit->ptrValue[1]), 0.0);
+    glRotatef((GLfloat)ptrFig->getRot(), 0.0, 0.0, 1.0);
+    glTranslatef(-ptrFig->getPontptr()->ptrInit->ptrValue[0], -ptrFig->getPontptr()->ptrInit->ptrValue[1], 0.0);
+}
 
 Figura *lineR(Pontptr *ptrPoints, int l1)
 {
@@ -360,11 +367,10 @@ void DeleteF(Figura *ptrFig)
 
     glOrtho(0, 600, 400, 0, -1, 1);
 
-    
     glTranslatef(ptrAuxvetTran[0], ptrAuxvetTran[1], 0.0);
     glScaled(ptrAuxvetScale[0], ptrAuxvetScale[1], 0.0);
-        glRotatef((GLfloat)ptrFig->getRot(),  0.0, 0.0, 1.0);
-    cout << "DELEF R " <<ptrFig->getRot()<<endl;
+    glRotatef((GLfloat)ptrFig->getRot(), 0.0, 0.0, 1.0);
+    cout << "DELEF R " << ptrFig->getRot() << endl;
     glColor4ub(0, 0, 0, 255);
 
     //inicia desenho
@@ -390,37 +396,33 @@ void DeleteF(Figura *ptrFig)
     return;
 }
 
-void operacao(Figura *ptrFig, double *ptrVet,  char o)
+void operacao(Figura *ptrFig, double *ptrVet, char o)
 {
     if (!ptrFig || !ptrVet)
         return;
-    
+
     //DeleteF(ptrFig);
 
-    cout << "ddd0" << o << " vet "  << ptrVet[0]<< " rot " << ptrFig->getRot() <<endl;
-    if(o == 'r')
-        ptrFig->setRot(ptrVet[0]);
-    
-    else if(o == 't')
-        ptrFig->setVetTrans(ptrVet);
-    else if(o == 's')
-        ptrFig->setVetScale(ptrVet);
-
-    double *ptrAuxvetTran = ptrFig->getVetTransla();
-    double *ptrAuxvetScale = ptrFig->getVetScale();
-    cout <<  "rot " << ptrFig->getRot() <<  "Scale " << ptrAuxvetScale[1] << "Trans " << ptrAuxvetTran[1] <<endl;
     glLoadIdentity();
     glPushMatrix();
 
     glOrtho(0, 600, 400, 0, -1, 1);
-       
- glTranslatef(ptrAuxvetTran[0], 0.0, 0.0);
+    cout << "ddd0" << o << " vet " << ptrVet[0] << " rot " << ptrFig->getRot() << endl;
+    if (o == 'r')
+        ptrFig->setRot(ptrVet[0]);
+    else if (o == 't')
+        ptrFig->setVetTrans(ptrVet);
+    else if (o == 's')
+        ptrFig->setVetScale(ptrVet);
+
+    double *ptrAuxvetScale = ptrFig->getVetScale();
+    double *ptrAuxvetTran = ptrFig->getVetTransla();
+
+    glTranslatef(ptrFig->getVetTransla()[0] + (ptrFig->getPontptr()->ptrInit->ptrValue[0]), ptrFig->getVetTransla()[1] + (ptrFig->getPontptr()->ptrInit->ptrValue[1]), 0.0);
+
     glRotatef((GLfloat)ptrFig->getRot(), 0.0, 0.0, 1.0);
-       
-
     glScaled(ptrAuxvetScale[0], ptrAuxvetScale[1], 0.0);
-    
-
+    glTranslatef(-ptrFig->getPontptr()->ptrInit->ptrValue[0], -ptrFig->getPontptr()->ptrInit->ptrValue[1], 0.0);
     glColor4ub(0, 255, 0, 255);
 
     //inicia desenho
@@ -467,8 +469,8 @@ Figura *regularLine(Pontptr *ptrPoints, double *ptrVet, double l, char *ptrType,
             if (!ptrAuxPont)
                 return NULL;
 
-            ptrAuxPont[0] = i <= 1 ? ptrVet[0] - l/2 : ptrVet[0] + l/2;
-            ptrAuxPont[1] = i <= 1 ? ptrVet[1] - ((l/2)*pow(-1, i)) : ptrVet[1] + ((l/2)*pow(-1, i));
+            ptrAuxPont[0] = i <= 1 ? ptrVet[0] - l / 2 : ptrVet[0] + l / 2;
+            ptrAuxPont[1] = i <= 1 ? ptrVet[1] - ((l / 2) * pow(-1, i)) : ptrVet[1] + ((l / 2) * pow(-1, i));
             setPoints(ptrPoints, ptrAuxPont, 2);
         }
     }
@@ -484,8 +486,8 @@ Figura *regularLine(Pontptr *ptrPoints, double *ptrVet, double l, char *ptrType,
             if (i != 5 && i != 2)
             {
 
-                ptrAuxPont[0] = i == 0 || i == 4 ? ptrVet[0] - l/2  : ptrVet[0] + l/2;
-                ptrAuxPont[1] = i == 3 || i == 0 ? ptrVet[1] - ((sqrt(3) * (l/2 )) * pow(-1, i)) : ptrVet[1] + ((sqrt(3) * (l/2 )) * pow(-1, i));
+                ptrAuxPont[0] = i == 0 || i == 4 ? ptrVet[0] - l / 2 : ptrVet[0] + l / 2;
+                ptrAuxPont[1] = i == 3 || i == 0 ? ptrVet[1] - ((sqrt(3) * (l / 2)) * pow(-1, i)) : ptrVet[1] + ((sqrt(3) * (l / 2)) * pow(-1, i));
                 cout << ptrAuxPont[1] << endl;
             }
             else
@@ -522,13 +524,11 @@ Figura *regularLine(Pontptr *ptrPoints, double *ptrVet, double l, char *ptrType,
         }
     }
 
-     
     glPushMatrix();
 
     glOrtho(0, 600, 400, 0, -1, 1);
     glTranslatef(300.0, 200.0, 0.0);
     //glRotatef((GLfloat)90.0, 0.0, 0.0, 1.0);
-
 
     glColor4ub(255, 20, 66, 255);
 
@@ -710,16 +710,15 @@ int main(int argc, char const *argv[])
             //  cout << ptrListFIG->getFig()->getName() << " " << ptrListFIG->getSize() << " " << ptrListFIG->getFig()->getPontptr()->ptrEnd->ptrValue[1] << endl;
 
             char vetN1[2];
-            char *vetO = new char [2];
+            char *vetO = new char[2];
             double vetAux[3];
 
             cout << "Digite nome da Fig " << endl;
             cin >> vetN1;
             cout << "Digite a operacao" << endl;
             cin >> vetO;
-       
 
-            cout <<" aaaaa" <<  vetN1 << "qqqqq"<< endl;
+            cout << " aaaaa" << vetN1 << "qqqqq" << endl;
             if (vetO[0] == 'r')
             {
                 cout << "Digite o angulo de rotação " << endl;
@@ -735,7 +734,6 @@ int main(int argc, char const *argv[])
                 cout << "Digite as coordenadas de escalamento " << endl;
                 cin >> vetAux[0] >> vetAux[1];
             }
-        
 
             //Deleteline(ptrListFIG->getFig(vetN)->getPontptr(),vetN);
             operacao(ptrListFIG->getFig(vetN1), vetAux, vetO[0]);

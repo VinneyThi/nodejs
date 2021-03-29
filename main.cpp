@@ -367,10 +367,11 @@ void DeleteF(Figura *ptrFig)
 
     glOrtho(0, 600, 400, 0, -1, 1);
 
-    glTranslatef(ptrAuxvetTran[0], ptrAuxvetTran[1], 0.0);
-    glScaled(ptrAuxvetScale[0], ptrAuxvetScale[1], 0.0);
+    glTranslatef(ptrFig->getVetTransla()[0] + (ptrFig->getPontptr()->ptrInit->ptrValue[0]), ptrFig->getVetTransla()[1] + (ptrFig->getPontptr()->ptrInit->ptrValue[1]), 0.0);
+
     glRotatef((GLfloat)ptrFig->getRot(), 0.0, 0.0, 1.0);
-    cout << "DELEF R " << ptrFig->getRot() << endl;
+    glScaled(ptrAuxvetScale[0], ptrAuxvetScale[1], 0.0);
+    glTranslatef(-ptrFig->getPontptr()->ptrInit->ptrValue[0], -ptrFig->getPontptr()->ptrInit->ptrValue[1], 0.0);
     glColor4ub(0, 0, 0, 255);
 
     //inicia desenho
@@ -401,7 +402,7 @@ void operacao(Figura *ptrFig, double *ptrVet, char o)
     if (!ptrFig || !ptrVet)
         return;
 
-    //DeleteF(ptrFig);
+    DeleteF(ptrFig);
 
     glLoadIdentity();
     glPushMatrix();
@@ -411,7 +412,11 @@ void operacao(Figura *ptrFig, double *ptrVet, char o)
     if (o == 'r')
         ptrFig->setRot(ptrVet[0]);
     else if (o == 't')
+    {
+        ptrVet[0] = ptrFig->getVetTransla()[0] + ptrVet[0];
+        ptrVet[1] = ptrFig->getVetTransla()[1] + ptrVet[1];
         ptrFig->setVetTrans(ptrVet);
+    }
     else if (o == 's')
         ptrFig->setVetScale(ptrVet);
 
@@ -423,7 +428,9 @@ void operacao(Figura *ptrFig, double *ptrVet, char o)
     glRotatef((GLfloat)ptrFig->getRot(), 0.0, 0.0, 1.0);
     glScaled(ptrAuxvetScale[0], ptrAuxvetScale[1], 0.0);
     glTranslatef(-ptrFig->getPontptr()->ptrInit->ptrValue[0], -ptrFig->getPontptr()->ptrInit->ptrValue[1], 0.0);
-    glColor4ub(0, 255, 0, 255);
+    //glColor4ub(0, 255, 0, 255);
+    glColor4ub(255, 20, 66, 255);
+
 
     //inicia desenho
     if (ptrFig->getName()[1] == 'L')
@@ -558,6 +565,100 @@ Figura *regularLine(Pontptr *ptrPoints, double *ptrVet, double l, char *ptrType,
     return ptrAuxF;
 }
 
+void eixoXY()
+{
+    glPushMatrix();
+
+    glOrtho(0, 600, 400, 0, -1, 1);
+    glTranslatef(300.0, 200.0, 0.0);
+    glColor4ub(255, 255, 255, 0);
+    glBegin(GL_LINE_LOOP);
+
+    glVertex2f(-300.0, 0.0);
+    glVertex2f(300.0, 0.0);
+    glEnd();
+    glPopMatrix();
+
+    glPushMatrix();
+
+    glOrtho(0, 600, 400, 0, -1, 1);
+    glTranslatef(300.0, 200.0, 0.0);
+    glColor4ub(255, 255, 255, 0);
+    glBegin(GL_LINE_LOOP);
+
+    glVertex2f(0.0, 200.0);
+    glVertex2f(0.0, -200.0);
+    glEnd();
+    glPopMatrix();
+}
+
+void tracoXM()
+{
+    for (int i = 0; i < 30; i++)
+    {
+        glPushMatrix();
+
+        glOrtho(0, 600, 400, 0, -1, 1);
+        glTranslatef(300.0, 200.0, 0.0);
+        glColor4ub(0, 255, 0, 0);
+        glBegin(GL_LINE_LOOP);
+        glVertex2f(0.0 + 10 * i, 2);
+        glVertex2f(0.0 + 10 * i, -2);
+        glEnd();
+        glPopMatrix();
+    }
+}
+
+void tracoXm()
+{
+    for (int i = 0; i < 30; i++)
+    {
+        glPushMatrix();
+
+        glOrtho(0, 600, 400, 0, -1, 1);
+        glTranslatef(300.0, 200.0, 0.0);
+        glColor4ub(0, 255, 0, 0);
+        glBegin(GL_LINE_LOOP);
+        glVertex2f(0.0 - 10 * i, 2);
+        glVertex2f(0.0 - 10 * i, -2);
+        glEnd();
+        glPopMatrix();
+    }
+}
+
+void tracoYM()
+{
+    for (int i = 0; i < 30; i++)
+    {
+        glPushMatrix();
+
+        glOrtho(0, 600, 400, 0, -1, 1);
+        glTranslatef(300.0, 200.0, 0.0);
+        glColor4ub(0, 255, 0, 0);
+        glBegin(GL_LINE_LOOP);
+        glVertex2f(2, 0 + 10 * i);
+        glVertex2f(-2, 0 + 10 * i);
+        glEnd();
+        glPopMatrix();
+    }
+}
+
+void tracoYm()
+{
+    for (int i = 0; i < 30; i++)
+    {
+        glPushMatrix();
+
+        glOrtho(0, 600, 400, 0, -1, 1);
+        glTranslatef(300.0, 200.0, 0.0);
+        glColor4ub(0, 255, 0, 0);
+        glBegin(GL_LINE_LOOP);
+        glVertex2f(2, 0 - 10 * i);
+        glVertex2f(-2, 0 - 10 * i);
+        glEnd();
+        glPopMatrix();
+    }
+}
 int main(int argc, char const *argv[])
 {
     Figura *ptrAuxFig;
@@ -617,29 +718,12 @@ int main(int argc, char const *argv[])
                                       //double cent[2] = {200, 200};
                                       //  regularLine(ptrPoints3, cent, 100, "t"); // fazer retornar um ponteiro para linkar a lista de ponstos
 
-        glPushMatrix();
+        eixoXY();
 
-        glOrtho(0, 600, 400, 0, -1, 1);
-        glTranslatef(300.0, 200.0, 0.0);
-        glColor4ub(255, 255, 255, 0);
-        glBegin(GL_LINE_LOOP);
-
-        glVertex2f(-300.0, 0.0);
-        glVertex2f(300.0, 0.0);
-        glEnd();
-        glPopMatrix();
-
-        glPushMatrix();
-
-        glOrtho(0, 600, 400, 0, -1, 1);
-        glTranslatef(300.0, 200.0, 0.0);
-        glColor4ub(255, 255, 255, 0);
-        glBegin(GL_LINE_LOOP);
-
-        glVertex2f(0.0, 200.0);
-        glVertex2f(0.0, -200.0);
-        glEnd();
-        glPopMatrix();
+        tracoXM();
+        tracoXm();
+        tracoYM();
+        tracoYm();
         SDL_GL_SwapBuffers();
 
         cout << "Escolha a operação " << endl

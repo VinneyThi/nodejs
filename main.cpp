@@ -824,11 +824,11 @@ int main(int argc, char const *argv[])
                 cin >> vetAux[0] >> vetAux[1];
             }
             else if (vetO[0] == 'x')
-              {
+            {
 
                 Pontptr *ptrAuxPont = new Pontptr;
                 Pontptr *ptrAuxPontDel = new Pontptr;
-                ptrAuxPontDel->size =0;
+                ptrAuxPontDel->size = 0;
                 Point *ptrAuxPont2;
                 ptrAuxPont2 = ptrListFIG->getFig(vetN1)->getPontptr()->ptrInit;
                 for (int i = 0; i < ptrListFIG->getFig(vetN1)->getPontptr()->size; i++)
@@ -836,8 +836,8 @@ int main(int argc, char const *argv[])
                 {
                     double *ptrAuxV = new double[2];
 
-                    ptrAuxV[0] = -1 *ptrAuxPont2->ptrValue[0];
-                    ptrAuxV[1] =  ptrAuxPont2->ptrValue[1];
+                    ptrAuxV[0] = -1 * ptrAuxPont2->ptrValue[0];
+                    ptrAuxV[1] = ptrAuxPont2->ptrValue[1];
                     setPoints(ptrAuxPont, ptrAuxV, 2);
                     ptrAuxV[0] *= -1;
                     setPoints(ptrAuxPontDel, ptrAuxV, 2);
@@ -852,7 +852,7 @@ int main(int argc, char const *argv[])
 
                 Pontptr *ptrAuxPont = new Pontptr;
                 Pontptr *ptrAuxPontDel = new Pontptr;
-                ptrAuxPontDel->size =0;
+                ptrAuxPontDel->size = 0;
                 Point *ptrAuxPont2;
                 ptrAuxPont2 = ptrListFIG->getFig(vetN1)->getPontptr()->ptrInit;
                 for (int i = 0; i < ptrListFIG->getFig(vetN1)->getPontptr()->size; i++)
@@ -871,8 +871,35 @@ int main(int argc, char const *argv[])
                 Deleteline(ptrAuxPontDel, vetN1);
             }
 
-            
-          operacao(ptrListFIG->getFig(vetN1), vetAux, vetO[0]);
+            else if (vetO[0] == 'c')
+            {
+
+                Pontptr *ptrAuxPont = new Pontptr;
+                Pontptr *ptrAuxPontDel = new Pontptr;
+                ptrAuxPontDel->size = 0;
+                Point *ptrAuxPont2;
+                cout << "Escolha o vetor de cisalhamento" << endl;
+                cin >> vetAux[0] >> vetAux[1];
+                ptrAuxPont2 = ptrListFIG->getFig(vetN1)->getPontptr()->ptrInit;
+                for (int i = 0; i < ptrListFIG->getFig(vetN1)->getPontptr()->size; i++)
+
+                {
+                    double *ptrAuxV = new double[2];
+
+                    ptrAuxV[0] =  ptrAuxPont2->ptrValue[0];
+                    ptrAuxV[1] =  ptrAuxPont2->ptrValue[1];
+                    setPoints(ptrAuxPontDel, ptrAuxV, 2);
+
+                    ptrAuxV[0] = vetAux[0] * ptrAuxPont2->ptrValue[1] + ptrAuxPont2->ptrValue[0];
+                    ptrAuxV[1] = vetAux[1] * ptrAuxPont2->ptrValue[0] + ptrAuxPont2->ptrValue[1];
+                    setPoints(ptrAuxPont, ptrAuxV, 2);
+                    ptrAuxPont2 = ptrAuxPont2->ptrProx;
+                }
+                ptrListFIG->getFig(vetN1)->setPtrListPoints(ptrAuxPont);
+                Deleteline(ptrAuxPontDel, vetN1);
+            }
+
+            operacao(ptrListFIG->getFig(vetN1), vetAux, vetO[0]);
         }
         else if (ptrEntrada[0] == 'd')
         {

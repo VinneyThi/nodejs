@@ -21,6 +21,7 @@ public:
     Figura(const char *ptrName, Pontptr *ptrListPoints, double rot, double *ptrVetTransla, double *ptrVetScale);
     Figura(const char *ptrName, Pontptr *ptrListPoints, double *ptrVetTransla);
     ~Figura();
+    void setPtrListPoints(Pontptr *ptrListPoints);
     void setRot(double rot);
     void setVetTrans(double *ptrVetAux);
     void setVetScale(double *ptrVetAux);
@@ -106,6 +107,11 @@ void Figura::setPtrProx(Figura *ptrAux)
         return;
 
     this->ptrProx = ptrAux;
+}
+
+void Figura::setPtrListPoints(Pontptr *ptrListPoints)
+{
+    this->ptrListPoints = ptrListPoints;
 }
 double Figura::getRot()
 {
@@ -428,9 +434,8 @@ void operacao(Figura *ptrFig, double *ptrVet, char o)
     glRotatef((GLfloat)ptrFig->getRot(), 0.0, 0.0, 1.0);
     glScaled(ptrAuxvetScale[0], ptrAuxvetScale[1], 0.0);
     glTranslatef(-ptrFig->getPontptr()->ptrInit->ptrValue[0], -ptrFig->getPontptr()->ptrInit->ptrValue[1], 0.0);
-    //glColor4ub(0, 255, 0, 255);
-    glColor4ub(255, 20, 66, 255);
-
+    glColor4ub(0, 255, 0, 255);
+    // glColor4ub(255, 20, 66, 255);
 
     //inicia desenho
     if (ptrFig->getName()[1] == 'L')
@@ -818,9 +823,56 @@ int main(int argc, char const *argv[])
                 cout << "Digite as coordenadas de escalamento " << endl;
                 cin >> vetAux[0] >> vetAux[1];
             }
+            else if (vetO[0] == 'x')
+              {
 
-            //Deleteline(ptrListFIG->getFig(vetN)->getPontptr(),vetN);
-            operacao(ptrListFIG->getFig(vetN1), vetAux, vetO[0]);
+                Pontptr *ptrAuxPont = new Pontptr;
+                Pontptr *ptrAuxPontDel = new Pontptr;
+                ptrAuxPontDel->size =0;
+                Point *ptrAuxPont2;
+                ptrAuxPont2 = ptrListFIG->getFig(vetN1)->getPontptr()->ptrInit;
+                for (int i = 0; i < ptrListFIG->getFig(vetN1)->getPontptr()->size; i++)
+
+                {
+                    double *ptrAuxV = new double[2];
+
+                    ptrAuxV[0] = -1 *ptrAuxPont2->ptrValue[0];
+                    ptrAuxV[1] =  ptrAuxPont2->ptrValue[1];
+                    setPoints(ptrAuxPont, ptrAuxV, 2);
+                    ptrAuxV[0] *= -1;
+                    setPoints(ptrAuxPontDel, ptrAuxV, 2);
+                    ptrAuxPont2 = ptrAuxPont2->ptrProx;
+                }
+                ptrListFIG->getFig(vetN1)->setPtrListPoints(ptrAuxPont);
+                Deleteline(ptrAuxPontDel, vetN1);
+            }
+
+            else if (vetO[0] == 'y')
+            {
+
+                Pontptr *ptrAuxPont = new Pontptr;
+                Pontptr *ptrAuxPontDel = new Pontptr;
+                ptrAuxPontDel->size =0;
+                Point *ptrAuxPont2;
+                ptrAuxPont2 = ptrListFIG->getFig(vetN1)->getPontptr()->ptrInit;
+                for (int i = 0; i < ptrListFIG->getFig(vetN1)->getPontptr()->size; i++)
+
+                {
+                    double *ptrAuxV = new double[2];
+
+                    ptrAuxV[0] = ptrAuxPont2->ptrValue[0];
+                    ptrAuxV[1] = -1 * ptrAuxPont2->ptrValue[1];
+                    setPoints(ptrAuxPont, ptrAuxV, 2);
+                    ptrAuxV[1] *= -1;
+                    setPoints(ptrAuxPontDel, ptrAuxV, 2);
+                    ptrAuxPont2 = ptrAuxPont2->ptrProx;
+                }
+                ptrListFIG->getFig(vetN1)->setPtrListPoints(ptrAuxPont);
+                Deleteline(ptrAuxPontDel, vetN1);
+            }
+
+            
+          operacao(ptrListFIG->getFig(vetN1), vetAux, vetO[0]);
         }
         else if (ptrEntrada[0] == 'd')
         {

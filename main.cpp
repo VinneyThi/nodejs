@@ -382,7 +382,7 @@ void DeleteF(Figura *ptrFig)
 
     //inicia desenho
     if (ptrFig->getName()[1] == 'L')
-        glBegin(GL_LINE_STRIP);
+        glBegin(GL_LINE_LOOP);
     else if (ptrFig->getName()[1] == 'H')
         glBegin(GL_LINE_STRIP);
     else
@@ -414,7 +414,7 @@ void operacao(Figura *ptrFig, double *ptrVet, char o)
     glPushMatrix();
 
     glOrtho(0, 600, 400, 0, -1, 1);
-    cout << "ddd0" << o << " vet " << ptrVet[0] << " rot " << ptrFig->getRot() << endl;
+    
     if (o == 'r')
         ptrFig->setRot(ptrVet[0]);
     else if (o == 't')
@@ -434,8 +434,8 @@ void operacao(Figura *ptrFig, double *ptrVet, char o)
     glRotatef((GLfloat)ptrFig->getRot(), 0.0, 0.0, 1.0);
     glScaled(ptrAuxvetScale[0], ptrAuxvetScale[1], 0.0);
     glTranslatef(-ptrFig->getPontptr()->ptrInit->ptrValue[0], -ptrFig->getPontptr()->ptrInit->ptrValue[1], 0.0);
-    glColor4ub(0, 255, 0, 255);
-    // glColor4ub(255, 20, 66, 255);
+    //glColor4ub(0, 255, 0, 255);
+     glColor4ub(255, 20, 66, 255);
 
     //inicia desenho
     if (ptrFig->getName()[1] == 'L')
@@ -699,12 +699,13 @@ int main(int argc, char const *argv[])
 
     SDL_SetVideoMode(600, 400, 32, SDL_OPENGLBLIT); // possivel pau
 
-    glClearColor(1, 1, 1, 1);
+    glClearColor(0, 0, 0, 1);
 
     //2D
     glMatrixMode(GL_MODELVIEW); //Atribui a projeção da matrix atual
     glLoadIdentity();           //Habilita desenho geometrico
     glDisable(GL_DEPTH_TEST);   // Desabilita o 3D
+        SDL_GL_SwapBuffers();
 
     // LOGICA
 
@@ -732,15 +733,14 @@ int main(int argc, char const *argv[])
         SDL_GL_SwapBuffers();
 
         cout << "Escolha a operação " << endl
-             << "1- Desenho livre " << endl
-             << "2- Desenho livre Regular  " << endl
-             << "3 -Poligonos Regulares" << endl
-             << "4- Operações em Poligonos" << endl
-             << "ESC- Para sair" << endl;
+             << "1 -Desenho livre Regular  " << endl
+             << "2 -Poligonos Regulares" << endl
+             << "3 -Operações em Poligonos" << endl
+             << "d -Deletar uma figura" << endl;
 
         cin >> ptrEntrada;
 
-        if (ptrEntrada[0] == '1')
+        if (ptrEntrada[0] == '8')
         {
 
             Pontptr *ptrPoints = new (Pontptr);
@@ -760,7 +760,7 @@ int main(int argc, char const *argv[])
 
             //cout << ptrListFIG->getFig("3L")->getName() <<" " << ptrListFIG->getSize() << " " << ptrListFIG->getFig("3L")->getPontptr()->ptrEnd->ptrValue[1] << endl;
         }
-        else if (ptrEntrada[0] == '2')
+        else if (ptrEntrada[0] == '1')
         {
 
             Pontptr *ptrPoints = new (Pontptr);
@@ -780,7 +780,7 @@ int main(int argc, char const *argv[])
 
             //cout << ptrListFIG->getFig("3L")->getName() <<" " << ptrListFIG->getSize() << " " << ptrListFIG->getFig("3L")->getPontptr()->ptrEnd->ptrValue[1] << endl;
         }
-        else if (ptrEntrada[0] == '3')
+        else if (ptrEntrada[0] == '2')
         {
             cout << "Passe o ponto central, tamanho da aresta e  a classe de Poligono" << endl;
             ptrEntradaP = new double[2];
@@ -793,7 +793,7 @@ int main(int argc, char const *argv[])
             ptrListFIG->addFig(ptrAuxFig);
         }
 
-        else if (ptrEntrada[0] == '4')
+        else if (ptrEntrada[0] == '3')
         {
             //cout << ptrAuxFig->getPontptr()->ptrEnd->ptrValue[0] << " " << ptrAuxFig->getPontptr()->ptrEnd->ptrValue[1] << endl;
             //  cout << ptrListFIG->getFig()->getName() << " " << ptrListFIG->getSize() << " " << ptrListFIG->getFig()->getPontptr()->ptrEnd->ptrValue[1] << endl;
@@ -801,13 +801,12 @@ int main(int argc, char const *argv[])
             char vetN1[2];
             char *vetO = new char[2];
             double vetAux[3];
-
+            cout << "Operacoes possiveis" << endl<< "r -Rotacao" << endl << "t - Translacao" << endl << "s - Escalamento" << endl << "x - Reflexao no eixo x" << endl << "y - Reflexao no eixo y" << endl << "c - cisalhamento" << endl;
             cout << "Digite nome da Fig " << endl;
             cin >> vetN1;
             cout << "Digite a operacao" << endl;
             cin >> vetO;
 
-            cout << " aaaaa" << vetN1 << "qqqqq" << endl;
             if (vetO[0] == 'r')
             {
                 cout << "Digite o angulo de rotação " << endl;

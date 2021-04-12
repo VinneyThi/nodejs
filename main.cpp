@@ -339,7 +339,7 @@ void Deleteline(Pontptr *ptrPoints, const char *ptrtyp)
 
     //inicia desenho
     if (ptrtyp[1] == 'L')
-        glBegin(GL_LINE_STRIP);
+        glBegin(GL_LINE_LOOP);
     else if (ptrtyp[1] == 'H')
         glBegin(GL_LINE_STRIP);
     else
@@ -439,7 +439,7 @@ void operacao(Figura *ptrFig, double *ptrVet, char o)
 
     //inicia desenho
     if (ptrFig->getName()[1] == 'L')
-        glBegin(GL_LINE_STRIP);
+        glBegin(GL_LINE_LOOP);
     else if (ptrFig->getName()[1] == 'H')
         glBegin(GL_LINE_STRIP);
     else
@@ -699,7 +699,7 @@ int main(int argc, char const *argv[])
 
     SDL_SetVideoMode(600, 400, 32, SDL_OPENGLBLIT); // possivel pau
 
-    glClearColor(0, 0, 0, 1);
+    glClearColor(0, 0, 0, 0);
 
     //2D
     glMatrixMode(GL_MODELVIEW); //Atribui a projeção da matrix atual
@@ -733,7 +733,7 @@ int main(int argc, char const *argv[])
         SDL_GL_SwapBuffers();
 
         cout << "Escolha a operação " << endl
-             << "1 -Desenho livre Regular  " << endl
+             << "1 -Desenho livre" << endl
              << "2 -Poligonos Regulares" << endl
              << "3 -Operações em Poligonos" << endl
              << "d -Deletar uma figura" << endl;

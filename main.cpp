@@ -240,7 +240,7 @@ Figura *LisFigDisplay::getFig(const char *ptrAux)
     if (!ptrAux)
         return NULL;
 
-    cout << " GETFOg" << ptrAux << endl;
+    
     Figura *ptrAuxList = this->ptrListPointInit;
 
     for (int i = 0; i < this->size; i++)
@@ -279,49 +279,6 @@ void setVetAux(double *ptrAux, double *ptrVet)
     }
 }
 
-
-void DeleteF(Figura *ptrFig)
-{
-    cout << "Dentro" << endl;
-    if (!ptrFig)
-        return;
-
-    double *ptrAuxvetTran = ptrFig->getVetTransla();
-    double *ptrAuxvetScale = ptrFig->getVetScale();
-
-    glPushMatrix();
-
-    glOrtho(0, 600, 400, 0, -1, 1);
-
-    glTranslatef(ptrFig->getVetTransla()[0] + (ptrFig->getPontptr()->ptrInit->ptrValue[0]), ptrFig->getVetTransla()[1] + (ptrFig->getPontptr()->ptrInit->ptrValue[1]), 0.0);
-
-    glRotatef((GLfloat)ptrFig->getRot(), 0.0, 0.0, 1.0);
-    glScaled(ptrAuxvetScale[0], ptrAuxvetScale[1], 0.0);
-    glTranslatef(-ptrFig->getPontptr()->ptrInit->ptrValue[0], -ptrFig->getPontptr()->ptrInit->ptrValue[1], 0.0);
-    glColor4ub(0, 0, 0, 255);
-
-    //inicia desenho
-    if (ptrFig->getName()[1] == 'L')
-        glBegin(GL_LINE_LOOP);
-    else if (ptrFig->getName()[1] == 'H')
-        glBegin(GL_LINE_STRIP);
-    else
-        glBegin(GL_LINE_LOOP);
-    for (int i = 0; i < ptrFig->getPontptr()->size; i++)
-    {
-
-        Point *ptrAuxPoint = retornaPonto(ptrFig->getPontptr(), i);
-        if (!ptrAuxPoint)
-            break;
-        glVertex2f(ptrAuxPoint->ptrValue[0], ptrAuxPoint->ptrValue[1]);
-    }
-
-    glEnd();
-    //fecha a matriz de desenho
-    glPopMatrix();
-
-    return;
-}
 
 void eixoXY()
 {
@@ -421,15 +378,20 @@ void tracoYm()
 
 Figura * curva(Pontptr *ptrPoints, int l1, double *ptrVetCor)
 {
-      if (!ptrPoints || !ptrVetCor)
+      if (!ptrPoints )
         return NULL;
+    
+     Figura *ptrAuxF;
     std::string ptrName = " ";
-
-    ptrName = std::to_string(l1) + "C";
-        Figura *ptrAuxF = new Figura(ptrName.c_str(), ptrPoints);
+    if(l1 >= 0)
+    {  
+        ptrName = std::to_string(l1) + "C";
+        ptrAuxF = new Figura(ptrName.c_str(), ptrPoints);
+        
+    }
     SDL_GL_SwapBuffers();
 
-  eixoXY();
+    eixoXY();
     tracoYM();
     tracoYm();
     tracoXM();
@@ -467,17 +429,18 @@ glMap1f(GL_MAP1_VERTEX_3, 0.0, 1, 3, ptrPoints->size, &vetcurva[0][0]);
 	// Tra�a a curva
 
     
-    
+    if(ptrVetCor)
         for(int i = 0 ; i < 3 ; i++)
-            {
+        {
                 float radnv = rand() % 150 ;
                 ptrVetCor[i] = (ptrVetCor[i] + radnv)  < 255.0 ? (ptrVetCor[i] + radnv) : ( ptrVetCor[i] +radnv);
-                printf("%f\n",ptrVetCor[i]);
-}
+        }
 
         
-    
-    glColor4ub(ptrVetCor[0], ptrVetCor[1], ptrVetCor[2], 0);
+    if(ptrVetCor)
+        glColor4ub(ptrVetCor[0], ptrVetCor[1], ptrVetCor[2], 0);
+    else
+        glColor4ub(0, 0, 0, 0);
 	glBegin(GL_LINE_STRIP);
 	for(float f = 0; f<=1.01; f+=delta)
 		glEvalCoord1f(f);
@@ -495,9 +458,38 @@ glMap1f(GL_MAP1_VERTEX_3, 0.0, 1, 3, ptrPoints->size, &vetcurva[0][0]);
 
 SDL_GL_SwapBuffers();
 
+return ptrAuxF;
+
 }
 
 
+
+void DeleteF(Figura *ptrFig)
+{
+    cout << "Dentro" << endl;
+    if (!ptrFig)
+        return;
+
+    double *ptrAuxvetTran = ptrFig->getVetTransla();
+    double *ptrAuxvetScale = ptrFig->getVetScale();
+
+    
+
+    
+    for (int i = 0; i < ptrFig->getPontptr()->size; i++)
+    {
+
+        Point *ptrAuxPoint = retornaPonto(ptrFig->getPontptr(), i);
+        if (!ptrAuxPoint)
+            break;
+        glVertex2f(ptrAuxPoint->ptrValue[0], ptrAuxPoint->ptrValue[1]);
+    }
+    curva(ptrFig->getPontptr(), -1, {});
+
+    glEnd();
+
+    return;
+}
 
 int main(int argc, char  *argv[])
 {
@@ -510,6 +502,7 @@ int main(int argc, char  *argv[])
     LisFigDisplay *ptrListFIG = new LisFigDisplay();
     int l1 = 0;
     int rl = 0;
+    int tamFig = 0;
 
     char *ptrEntrada = new char[240];
     double *ptrEntradaP;
@@ -579,7 +572,7 @@ int main(int argc, char  *argv[])
                 flagEx = false;
             else if (eventUser.type == SDL_KEYUP && eventUser.key.keysym.sym == SDLK_KP_ENTER)
             {
-                   if(ptrListFIG->getSize() >= 5)
+                   if(tamFig >= 5)
                     {   printf("Numero limite maximo\n");
                         delete ptrPoints;
                         ptrPoints = new (Pontptr);
@@ -604,6 +597,7 @@ int main(int argc, char  *argv[])
                         break;
                     }   
                 ptrAuxFig = curva(ptrPoints, ++l1 ,bufferCor);
+                tamFig++;
                 ptrListFIG->addFig(ptrAuxFig);
                 ptrPoints = new (Pontptr);
                 ptrPoints->size = 0;
@@ -623,11 +617,30 @@ int main(int argc, char  *argv[])
                                 ptrEntradaP = new double[2];
                                 ptrEntradaP[0] = (x - 300) /300.0;
                                 ptrEntradaP[1] = -1.0*(y - 200 )/200.0;
+                                if ( ptrPoints->size > 0 && ptrEntradaP[0] == ptrPoints->ptrEnd->ptrValue[0])
+                                    {
+                                        printf("Entrada Invalida\n");
+                                        delete ptrPoints;
+                                        ptrPoints = new (Pontptr);
+                                        ptrPoints->size = 0;
+                                        break;
+                                    }
                                 setPoints(ptrPoints, ptrEntradaP, 2);
+                                
                                 
                                 
                             }
                 }
+
+            else if (eventUser.type == SDL_KEYUP && eventUser.key.keysym.sym == SDLK_d)
+            {
+
+                char vetN[2];
+                cout << "Digite o nome da Fig a ser deletada" << endl;
+                cin >> vetN;
+                DeleteF(ptrListFIG->getFig(vetN));
+                tamFig--;
+            }
               
        
         } 

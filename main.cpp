@@ -425,7 +425,7 @@ Figura * curva(Pontptr *ptrPoints, int l1, double *ptrVetCor)
         return NULL;
     std::string ptrName = " ";
 
-    ptrName = std::to_string(l1) + "L";
+    ptrName = std::to_string(l1) + "C";
         Figura *ptrAuxF = new Figura(ptrName.c_str(), ptrPoints);
     SDL_GL_SwapBuffers();
 
@@ -482,6 +482,15 @@ glMap1f(GL_MAP1_VERTEX_3, 0.0, 1, 3, ptrPoints->size, &vetcurva[0][0]);
 	for(float f = 0; f<=1.01; f+=delta)
 		glEvalCoord1f(f);
 	glEnd();
+
+    glPointSize(5.0);
+  glBegin(GL_POINTS);
+  for (int  i = 0; i < ptrPoints->size; i++)
+   { 
+     glVertex3fv(&vetcurva[i][0]);
+      
+  }
+  glEnd();
 
 
 SDL_GL_SwapBuffers();
@@ -561,13 +570,6 @@ int main(int argc, char  *argv[])
 
 
 
-
-        if (ptrEntrada[0] == '1')
-        {
-            
-
-        }
-    
         while (SDL_PollEvent(&eventUser))
         {
             if (eventUser.type == SDL_QUIT)
@@ -577,6 +579,30 @@ int main(int argc, char  *argv[])
                 flagEx = false;
             else if (eventUser.type == SDL_KEYUP && eventUser.key.keysym.sym == SDLK_KP_ENTER)
             {
+                   if(ptrListFIG->getSize() >= 5)
+                    {   printf("Numero limite maximo\n");
+                        delete ptrPoints;
+                        ptrPoints = new (Pontptr);
+                        ptrPoints->size = 0;
+                        break ;
+                    }
+
+                    if(ptrPoints->size > 9 || ptrPoints->size < 3 )
+                    {
+                        printf("Quantidades de pontos invalidos\n");
+                        delete ptrPoints;
+                        ptrPoints = new (Pontptr);
+                        ptrPoints->size = 0;
+                        break;
+                    }
+                    if(ptrPoints->size % 2 == 0)
+                    {
+                        printf("Quantidades de pontos não impar\n");
+                        delete ptrPoints;
+                        ptrPoints = new (Pontptr);
+                        ptrPoints->size = 0;
+                        break;
+                    }   
                 ptrAuxFig = curva(ptrPoints, ++l1 ,bufferCor);
                 ptrListFIG->addFig(ptrAuxFig);
                 ptrPoints = new (Pontptr);
@@ -591,8 +617,9 @@ int main(int argc, char  *argv[])
                         
                         if(eventUser.button.button == SDL_BUTTON_LEFT )
                             {
+                             
                                 SDL_GetMouseState(&x, &y);
-                                printf("x %d y %d \n",x,y);
+                                printf("x %d y %d \n",x-300,-y + 200);
                                 ptrEntradaP = new double[2];
                                 ptrEntradaP[0] = (x - 300) /300.0;
                                 ptrEntradaP[1] = -1.0*(y - 200 )/200.0;

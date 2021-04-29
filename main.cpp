@@ -521,7 +521,7 @@ int main(int argc, char  *argv[])
 
     //Nome da janela e icone
 
-    SDL_WM_SetCaption("Primeira janela SDL", NULL);
+    SDL_WM_SetCaption("Curvas 2D", NULL);
 
     //Tamanho da janela
 
@@ -549,6 +549,7 @@ int main(int argc, char  *argv[])
     glutMouseFunc(MouseClick);
       Pontptr *ptrPoints = new (Pontptr);
      ptrPoints->size = 0;
+     cout << "Use o mouse para definir os ponstos e aperte a tecla ENTER para confirmar a entrada" << endl << "Para deletar uma curva aperte a tecla d" << endl;
     while (flagEx)
     {
 
@@ -561,6 +562,7 @@ int main(int argc, char  *argv[])
                                       //double cent[2] = {200, 200};
                                       //  regularLine(ptrPoints3, cent, 100, "t"); // fazer retornar um ponteiro para linkar a lista de ponstos
 
+        
 
 
         while (SDL_PollEvent(&eventUser))
@@ -601,6 +603,7 @@ int main(int argc, char  *argv[])
                 ptrListFIG->addFig(ptrAuxFig);
                 ptrPoints = new (Pontptr);
                 ptrPoints->size = 0;
+                cout << "Use o mouse para definir os ponstos e aperte a tecla ENTER para confirmar a entrada" << endl << "Para deletar uma curva aperte a tecla d" << endl;
             }
                 
 
@@ -613,7 +616,7 @@ int main(int argc, char  *argv[])
                             {
                              
                                 SDL_GetMouseState(&x, &y);
-                                printf("x %d y %d \n",x-300,-y + 200);
+                               // printf("x %d y %d \n",x-300,-y + 200);
                                 ptrEntradaP = new double[2];
                                 ptrEntradaP[0] = (x - 300) /300.0;
                                 ptrEntradaP[1] = -1.0*(y - 200 )/200.0;
